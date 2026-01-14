@@ -1,26 +1,44 @@
 <% layout("layouts/boilerplate") %>
 
-    <h3>Listing Details</h3>
+<div class="details-container">
 
-    <ul>
-        <li><%= listing.title %></li>
-        <li><%= listing.description %></li>
-        <li>₹ Price: <%= listing.price %></li>
-        <li>Location: <%= listing.location %></li>
-        <li>Country: <%= listing.country %></li>
-    </ul>
+  <h2 class="details-title"><%= listing.title %></h2>
 
-    <br>
+  <div class="details-card">
 
-    <a href="/listings/<%= listing._id %>/edit">Edit Listing</a>
+    <img
+      src="<%= listing.image.url %>"
+      alt="Listing Image"
+      class="details-image"
+    />
 
+    <div class="details-info">
+      <p class="description"><%= listing.description %></p>
 
-    <br><br>
-    <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST">
-  <button type="submit">🗑 Delete Listing</button>
-</form>
+      <p><strong>Price:</strong> ₹ <%= listing.price %></p>
+      <p><strong>Location:</strong> <%= listing.location %></p>
+      <p><strong>Country:</strong> <%= listing.country %></p>
+    </div>
 
+    <div class="details-actions">
+      <a href="/listings/<%= listing._id %>/edit" class="btn edit-btn">
+        ✏️ Edit Listing
+      </a>
 
-    <a href="/listings">⬅ Back to Listings</a>
+      <form
+        method="post"
+        action="/listings/<%= listing._id %>?_method=DELETE"
+        class="delete-form"
+      >
+        <button class="btn delete-btn">
+          🗑️ Delete Listing
+        </button>
+      </form>
 
+      <a href="/listings" class="btn back-btn">
+        ⬅ Back to Listings
+      </a>
+    </div>
 
+  </div>
+</div>

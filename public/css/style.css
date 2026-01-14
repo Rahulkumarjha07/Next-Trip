@@ -1,3 +1,8 @@
+body{
+
+    padding: 1.5rem;;
+}
+
 .navbar{
     height: 5rem;
     background-color: white;
@@ -47,3 +52,207 @@
     flex-wrap: wrap;
     align-items: center;
 }
+
+
+/* card styling */
+.card{
+    border:none;
+    margin-bottom: 2rem;
+}
+.card-img-top{
+    border-radius: 1rem;
+    width :100%;
+    object-fit: cover;
+}
+.card-body{
+    padding:0;
+}
+
+.card-text{
+    font-weight:400;
+}
+.card-img-top{
+    height: 20rem;;
+}
+.card-img-top:hover{
+    transform: scale(1.05);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+
+/* Container */
+.form-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Title */
+.form-title {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 26px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Form */
+.listing-form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Input groups */
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #555;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #ff385c;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 56, 92, 0.15);
+}
+
+/* Button */
+.btn-submit {
+  background: #ff385c;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-submit:hover {
+  background: #e11d48;
+}
+
+
+.details-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.details-title {
+  font-size: 30px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.details-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.details-image {
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+}
+
+.details-info {
+  padding: 25px;
+  font-size: 16px;
+  color: #444;
+}
+
+.details-info p {
+  margin-bottom: 12px;
+}
+
+.details-info .description {
+  font-size: 17px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Buttons */
+.details-actions {
+  display: flex;
+  gap: 15px;
+  padding: 20px;
+  border-top: 1px solid #eee;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* Edit */
+.edit-btn {
+  background: #2563eb;
+  color: white;
+}
+
+.edit-btn:hover {
+  background: #1e40af;
+}
+
+/* Delete */
+.delete-btn {
+  background: #dc2626;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #991b1b;
+}
+
+/* Back */
+.back-btn {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.back-btn:hover {
+  background: #d1d5db;
+}
+
+.delete-form {
+  margin: 0;
+}
+
+
+

@@ -1,35 +1,40 @@
 <% layout("layouts/boilerplate") %>
 
-  <h3>Create New Listing</h3>
+<div class="form-container">
+  <h2 class="form-title">Create New Listing</h2>
 
-  <form method="post" action="/listings">
+  <form method="post" action="/listings" class="listing-form">
 
-    <label for="title">Title:</label>
-    <input type="text" id="title" name="listing[title]" required>
-    <br><br>
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input type="text" id="title" name="listing[title]" placeholder="Enter listing title" required>
+    </div>
 
-    <label for="description">Description:</label>
-    <textarea id="description" name="listing[description]" required></textarea>
-    <br><br>
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" name="listing[description]" placeholder="Describe your place" required></textarea>
+    </div>
 
-    <label for="price">Price:</label>
-    <input type="number" id="price" name="listing[price]" required>
-    <br><br>
+    <div class="form-group">
+      <label for="price">Price (₹)</label>
+      <input type="number" id="price" name="listing[price]" placeholder="Enter price" required>
+    </div>
 
-    <label for="image">Image URL:</label>
-    <input type="text" id="image" name="listing[image][url]" required>
-    <br><br>
+    <div class="form-group">
+      <label for="image">Image URL</label>
+      <input type="text" id="image" name="listing[image][url]" placeholder="Paste image URL" required>
+    </div>
 
-    <label for="location">Location:</label>
-    <input type="text" id="location" name="listing[location]" required>
-    <br><br>
+    <div class="form-group">
+      <label for="location">Location</label>
+      <input type="text" id="location" name="listing[location]" placeholder="City / Area" required>
+    </div>
 
-    <label for="country">Country:</label>
-    <input type="text" id="country" name="listing[country]" required>
-    <br><br>
+    <div class="form-group">
+      <label for="country">Country</label>
+      <input type="text" id="country" name="listing[country]" placeholder="Country name" required>
+    </div>
 
-    <button type="submit">Create Listing</button>
-
+    <button type="submit" class="btn-submit">Create Listing</button>
   </form>
-
-
+</div>
