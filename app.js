@@ -1,9 +1,10 @@
 const express = require("express");
 const app = express();
 
-const mongoose = require("mongoose");
 const path = require("path");
+const mongoose = require("mongoose");
 const methodOverride = require("method-override");
+const ejsMate = require("ejs-mate");
 
 const Listing = require("./models/listing");
 
@@ -11,13 +12,15 @@ const Listing = require("./models/listing");
 mongoose.connect("mongodb://127.0.0.1:27017/wanderlast")
   .then(() => console.log("Connected!"));
 
-// View engine
+// View Engine
+app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
+app.use(express.static(path.join(__dirname, "public")));
 
 // INDEX
 app.get("/listings", async (req, res) => {
@@ -33,9 +36,14 @@ app.get("/listings/new", (req, res) => {
 // CREATE
 app.post("/listings", async (req, res) => {
   const listing = new Listing(req.body.listing);
-  listing.image.filename = "listingimage";
   await listing.save();
   res.redirect("/listings");
+});
+
+// SHOW
+app.get("/listings/:id", async (req, res) => {
+  const listing = await Listing.findById(req.params.id);
+  res.render("listing/show", { listing });
 });
 
 // EDIT
@@ -46,19 +54,8 @@ app.get("/listings/:id/edit", async (req, res) => {
 
 // UPDATE
 app.put("/listings/:id", async (req, res) => {
-  console.log(req.body.listing); // 👈 DEBUG
-  await Listing.findByIdAndUpdate(req.params.id, {
-    $set: req.body.listing
-  });
+  await Listing.findByIdAndUpdate(req.params.id, req.body.listing);
   res.redirect(`/listings/${req.params.id}`);
-});
-
-
-
-// SHOW
-app.get("/listings/:id", async (req, res) => {
-  const listing = await Listing.findById(req.params.id);
-  res.render("listing/show", { listing });
 });
 
 // DELETE
@@ -66,8 +63,6 @@ app.delete("/listings/:id", async (req, res) => {
   await Listing.findByIdAndDelete(req.params.id);
   res.redirect("/listings");
 });
-
-
 
 app.listen(8080, () => {
   console.log("server is listening on port 8080");
