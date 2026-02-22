@@ -34,10 +34,15 @@ app.get("/listings/new", (req, res) => {
 });
 
 // CREATE
-app.post("/listings", async (req, res) => {
-  const listing = new Listing(req.body.listing);
+app.post("/listings", async (req, res,next) => {
+  try{
+     const listing = new Listing(req.body.listing);
   await listing.save();
   res.redirect("/listings");
+  }
+  catch{
+    next(err);
+  }
 });
 
 // SHOW
@@ -62,6 +67,10 @@ app.put("/listings/:id", async (req, res) => {
 app.delete("/listings/:id", async (req, res) => {
   await Listing.findByIdAndDelete(req.params.id);
   res.redirect("/listings");
+});
+
+app.use((res,req,err)=>{
+  res.send("something went weong");
 });
 
 app.listen(8080, () => {
