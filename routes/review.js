@@ -14,6 +14,7 @@ route.post("/", async (req, res) => {
   await newReview.save();
   await listing.save();
 
+ req.flash("success","Review Created Succesfully");
   res.redirect(`/listings/${listing._id}`);
 });
 

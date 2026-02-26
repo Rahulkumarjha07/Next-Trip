@@ -1,5 +1,8 @@
 const express = require("express");
 const app = express();
+const session = require("express-session");
+const flash = require('connect-flash');
+
 
 const path = require("path");
 const mongoose = require("mongoose");
@@ -19,6 +22,25 @@ app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+//sessionoptions
+
+const sessionoption = {
+  secret:"mysecretcodekey",
+    resave: false,
+    saveUninitialized: false,
+    cookie:{
+      expires:Date.now() + 7 *60 *60 *24 *1000,
+      maxAge:1000* 60 *60 *24 *3,
+      httpOnly:true
+    },
+
+};
+
+app.use(session(sessionoption));
+app.use(flash());
+
+
+
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
@@ -28,8 +50,63 @@ const listings = require("./routes/listings.js");
 
 const reviews = require("./routes/review.js");
 
+const userRoute = require("./routes/user.js");
+
+const login = require("./routes/login_route.js");
+
+const passport = require("passport");
+const localstrategy = require("passport-local");
+const user = require("./models/user.js");
+
+
+
+//passport
+
+// Initialize passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Use local strategy
+passport.use(new localstrategy(user.authenticate()));
+
+// Serialize user
+passport.serializeUser(user.serializeUser());
+
+// Deserialize user
+passport.deserializeUser(user.deserializeUser());
+
+app.use((req, res, next) => {
+  const success = req.flash("success");
+  const error = req.flash("error");
+
+  res.locals.success = success.length > 0 ? success[0] : null;
+  res.locals.error = error.length > 0 ? error[0] : null;
+
+  next();
+});
+
+app.get("/demo",async   (req,res)=>{
+     const fakeuser = new user({
+      email:"rahulkumarjha5231662@gmail.com",
+      username:"rahul",
+     });
+     const newuser = await user.register(fakeuser,"helloworld");
+     res.send(newuser);
+});
+
+
+
 app.use("/listings",listings);
 app.use("/listings/:id/reviews",reviews);
+app.use("/signup",userRoute);
+
+app.use("/login",login);
+
+
+
+
+
+
 
 // INDEX
  /* app.get("/listings", async (req, res) => {
