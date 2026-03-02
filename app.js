@@ -81,6 +81,10 @@ app.use((req, res, next) => {
 
 // ================= ROUTES =================
 
+app.get("/", (req, res) => {
+  res.redirect("/listings");
+});
+
 const listings = require("./routes/listings");
 const reviews = require("./routes/review");
 const userRoute = require("./routes/user");
