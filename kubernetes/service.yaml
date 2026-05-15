@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: staynest-service
+
+spec:
+  selector:
+    app: staynest
+
+  ports:
+    - port: 80
+      targetPort: 3000
+
+  type: ClusterIP

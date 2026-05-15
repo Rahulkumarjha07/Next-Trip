@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: staynest
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: staynest
+
+  template:
+    metadata:
+      labels:
+        app: staynest
+
+    spec:
+      containers:
+      - name: staynest
+
+        image: vyshnavi1411/staynest:v2
+
+        ports:
+        - containerPort: 3000
+
+        envFrom:
+        - secretRef:
+            name: staynest-secret

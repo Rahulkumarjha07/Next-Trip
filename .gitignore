@@ -1,2 +1,51 @@
-.env
+# Dependencies
 node_modules/
+
+# Environment variables
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# macOS files
+.DS_Store
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+terraform.tfvars
+.terraform.lock.hcl
+
+# Kubernetes
+kubeconfig.yaml
+
+# Docker
+docker-compose.override.yml
+
+# IDE files
+.vscode/
+.idea/
+
+# Jenkins
+workspace/
+
+# Build files
+dist/
+build/
+
+# Coverage
+coverage/
+
+# Temporary files
+tmp/
+temp/
+
+# OS files
+Thumbs.db
+kubernetes/secret.yaml
