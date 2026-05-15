@@ -9,13 +9,6 @@ pipeline {
     }
 
     stages {
-
-        stage('Clone Repository') {
-            steps {
-                git 'https://github.com/Rahulkumarjha07/StayNest.git'
-            }
-        }
-
         stage('Terraform Init') {
             steps {
                 dir('terraform') {
