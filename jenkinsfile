@@ -1,14 +1,6 @@
 pipeline {
     agent any
 
-    parameters {
-        booleanParam(
-            name: 'DESTROY',
-            defaultValue: false,
-            description: 'Destroy complete infrastructure'
-        )
-    }
-
     environment {
         PATH = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
         IMAGE = "vyshnavi1411/staynest:v3"
@@ -18,33 +10,55 @@ pipeline {
 
     stages {
 
+        stage('Docker Build & Push') {
+            steps {
+
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+
+                    sh '''
+                    echo $DOCKER_PASS | docker login \
+                    -u $DOCKER_USER --password-stdin
+
+                    docker buildx create --use || true
+
+                    docker buildx build \
+                    --platform linux/amd64 \
+                    -t $IMAGE \
+                    --push .
+                    '''
+                }
+            }
+        }
+
         stage('Terraform Init') {
             steps {
-                dir('terraform') {
-                    sh 'terraform init'
-                }
+                sh 'cd terraform && terraform init'
+            }
+        }
+
+        stage('Terraform Validate') {
+            steps {
+                sh 'cd terraform && terraform validate'
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                sh 'cd terraform && terraform plan'
             }
         }
 
         stage('Terraform Apply') {
-
-            when {
-                expression { params.DESTROY == false }
-            }
-
             steps {
-                dir('terraform') {
-                    sh 'terraform apply -auto-approve'
-                }
+                sh 'cd terraform && terraform apply -auto-approve'
             }
         }
 
         stage('Update kubeconfig') {
-
-            when {
-                expression { params.DESTROY == false }
-            }
-
             steps {
                 sh '''
                 aws eks update-kubeconfig \
@@ -55,11 +69,6 @@ pipeline {
         }
 
         stage('Install Ingress Controller') {
-
-            when {
-                expression { params.DESTROY == false }
-            }
-
             steps {
                 sh '''
                 kubectl apply -f \
@@ -69,11 +78,6 @@ pipeline {
         }
 
         stage('Create Kubernetes Secret') {
-
-            when {
-                expression { params.DESTROY == false }
-            }
-
             steps {
 
                 withCredentials([
@@ -100,41 +104,7 @@ pipeline {
             }
         }
 
-        stage('Build & Push Docker Image') {
-
-            when {
-                expression { params.DESTROY == false }
-            }
-
-            steps {
-
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-creds',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-
-                    sh '''
-                    echo $DOCKER_PASS | docker login \
-                    -u $DOCKER_USER --password-stdin
-
-                    docker buildx create --use || true
-
-                    docker buildx build \
-                    --platform linux/amd64 \
-                    -t $IMAGE \
-                    --push .
-                    '''
-                }
-            }
-        }
-
         stage('Deploy to Kubernetes') {
-
-            when {
-                expression { params.DESTROY == false }
-            }
-
             steps {
                 sh '''
                 kubectl apply -f kubernetes/
@@ -145,12 +115,8 @@ pipeline {
         }
 
         stage('Verify Deployment') {
-
-            when {
-                expression { params.DESTROY == false }
-            }
-
             steps {
+                sh 'kubectl get nodes'
                 sh 'kubectl get pods'
                 sh 'kubectl get svc'
                 sh 'kubectl get ingress'
@@ -158,14 +124,9 @@ pipeline {
         }
 
         stage('Destroy Infrastructure') {
-
-            when {
-                expression { params.DESTROY == true }
-            }
-
             steps {
 
-                input message: 'Are you sure you want to destroy all AWS and Kubernetes infrastructure?', ok: 'Destroy'
+                input 'Do you want to destroy infrastructure?'
 
                 sh '''
                 kubectl delete -f kubernetes/ --ignore-not-found=true
@@ -177,9 +138,7 @@ pipeline {
                 --ignore-not-found=true
                 '''
 
-                dir('terraform') {
-                    sh 'terraform destroy -auto-approve'
-                }
+                sh 'cd terraform && terraform destroy -auto-approve'
             }
         }
     }
