@@ -27,14 +27,15 @@ module "eks" {
   cluster_endpoint_public_access = true
 
   enable_cluster_creator_admin_permissions = true
-
   eks_managed_node_groups = {
-    default = {
-      desired_size = 2
-      max_size     = 2
-      min_size     = 3
+  default = {
+    desired_size = 2
+    max_size     = 3
+    min_size     = 2
 
-      instance_types = ["t3.small"]
-    }
+    instance_types = ["t3.medium"]
   }
+}
+  
+  
 }
