@@ -16,3 +16,6 @@ dist
 coverage
 
 *.sqlite
+
+Dockerfile
+README.md
