@@ -5,6 +5,7 @@ pipeline {
         IMAGE = "rahuljha0007/staynest:v3"
         AWS_REGION = "us-east-1"
         CLUSTER_NAME = "staynest-cluster"
+        PATH = "/usr/bin:/usr/local/bin:${env.PATH}"
     }
 
     stages {
@@ -31,52 +32,88 @@ pipeline {
 
         stage('Terraform Init') {
             steps {
-                sh '''
-                cd terraform
-                terraform init
-                '''
+
+                withCredentials([
+                    string(credentialsId: 'aws-access-key', variable: 'AWS_ACCESS_KEY_ID'),
+                    string(credentialsId: 'aws-secret-key', variable: 'AWS_SECRET_ACCESS_KEY')
+                ]) {
+
+                    sh '''
+                    cd terraform
+                    terraform init
+                    '''
+                }
             }
         }
 
         stage('Terraform Validate') {
             steps {
-                sh '''
-                cd terraform
-                terraform validate
-                '''
+
+                withCredentials([
+                    string(credentialsId: 'aws-access-key', variable: 'AWS_ACCESS_KEY_ID'),
+                    string(credentialsId: 'aws-secret-key', variable: 'AWS_SECRET_ACCESS_KEY')
+                ]) {
+
+                    sh '''
+                    cd terraform
+                    terraform validate
+                    '''
+                }
             }
         }
 
         stage('Terraform Plan') {
             steps {
-                sh '''
-                cd terraform
-                terraform plan
-                '''
+
+                withCredentials([
+                    string(credentialsId: 'aws-access-key', variable: 'AWS_ACCESS_KEY_ID'),
+                    string(credentialsId: 'aws-secret-key', variable: 'AWS_SECRET_ACCESS_KEY')
+                ]) {
+
+                    sh '''
+                    cd terraform
+                    terraform plan
+                    '''
+                }
             }
         }
 
         stage('Terraform Apply') {
             steps {
-                sh '''
-                cd terraform
-                terraform apply -auto-approve
-                '''
+
+                withCredentials([
+                    string(credentialsId: 'aws-access-key', variable: 'AWS_ACCESS_KEY_ID'),
+                    string(credentialsId: 'aws-secret-key', variable: 'AWS_SECRET_ACCESS_KEY')
+                ]) {
+
+                    sh '''
+                    cd terraform
+                    terraform apply -auto-approve
+                    '''
+                }
             }
         }
 
         stage('Update kubeconfig') {
             steps {
-                sh '''
-                aws eks update-kubeconfig \
-                --region $AWS_REGION \
-                --name $CLUSTER_NAME
-                '''
+
+                withCredentials([
+                    string(credentialsId: 'aws-access-key', variable: 'AWS_ACCESS_KEY_ID'),
+                    string(credentialsId: 'aws-secret-key', variable: 'AWS_SECRET_ACCESS_KEY')
+                ]) {
+
+                    sh '''
+                    aws eks update-kubeconfig \
+                    --region $AWS_REGION \
+                    --name $CLUSTER_NAME
+                    '''
+                }
             }
         }
 
         stage('Install Ingress Controller') {
             steps {
+
                 sh '''
                 kubectl apply -f \
                 https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
@@ -106,12 +143,12 @@ pipeline {
                     kubectl delete secret staynest-secret --ignore-not-found=true
 
                     kubectl create secret generic staynest-secret \
-                    --from-literal=MONGO_URL=$MONGO_URL \
-                    --from-literal=MAPBOX_TOKEN=$MAPBOX_TOKEN \
-                    --from-literal=CLOUD_NAME=$CLOUD_NAME \
-                    --from-literal=API_KEY=$API_KEY \
-                    --from-literal=API_SECRET=$API_SECRET \
-                    --from-literal=SECRET=$SECRET
+                    --from-literal=MONGO_URL="$MONGO_URL" \
+                    --from-literal=MAPBOX_TOKEN="$MAPBOX_TOKEN" \
+                    --from-literal=CLOUD_NAME="$CLOUD_NAME" \
+                    --from-literal=API_KEY="$API_KEY" \
+                    --from-literal=API_SECRET="$API_SECRET" \
+                    --from-literal=SECRET="$SECRET"
                     '''
                 }
             }
@@ -119,6 +156,7 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
+
                 sh '''
                 kubectl apply -f kubernetes/
 
@@ -129,6 +167,7 @@ pipeline {
 
         stage('Verify Deployment') {
             steps {
+
                 sh 'kubectl get nodes'
                 sh 'kubectl get pods'
                 sh 'kubectl get svc'
@@ -151,10 +190,16 @@ pipeline {
                 --ignore-not-found=true
                 '''
 
-                sh '''
-                cd terraform
-                terraform destroy -auto-approve
-                '''
+                withCredentials([
+                    string(credentialsId: 'aws-access-key', variable: 'AWS_ACCESS_KEY_ID'),
+                    string(credentialsId: 'aws-secret-key', variable: 'AWS_SECRET_ACCESS_KEY')
+                ]) {
+
+                    sh '''
+                    cd terraform
+                    terraform destroy -auto-approve
+                    '''
+                }
             }
         }
     }
